@@ -19,6 +19,8 @@
             "js": ["content.js"],
             "run_at": "document_end"
         }
-    ]
+    ],
+
+    "options_page": "frontend/dist/options.html"
 
 }
