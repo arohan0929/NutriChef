@@ -1,8 +1,8 @@
 <script>
 // @ts-nocheck
 
-  const apiKey = "bfdba53f6987d0b08b5dda8cd3f33246";
-  const appId = "e63fba5a"; // Replace with your Nutritionix App ID
+  const apiKey = "hjudf";
+  const appId = "fewjo"; // Replace with your Nutritionix App ID
 
   async function getCurrentIngredients() {
     return new Promise((resolve, reject) => {
