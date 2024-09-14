@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  
   const defaultNutrientRanges = {
     carbohydrates: { min: 225, max: 325 }, // grams
     proteins: { min: 50, max: 175 }, // grams
@@ -18,10 +20,26 @@
   let mealsPerDay: number = 3; // default value
 
 
-
+  onMount(() => {
+    // Fetch user data from the server here
+    // and populate the form fields
+    chrome.storage.local.get(["userProfile"], (result) => {
+      const userProfile = result.userProfile;
+      if (userProfile) {
+        height = userProfile.height;
+        weight = userProfile.weight;
+        age = userProfile.age;
+        sex = userProfile.sex;
+        activityLevel = userProfile.activityLevel;
+        healthCondition = userProfile.healthCondition;
+        nutrientRanges = userProfile.nutrientRanges;
+        mealsPerDay = userProfile.mealsPerDay;
+      }
+    });
+  });
 
   let nutrientRanges = JSON.parse(JSON.stringify(defaultNutrientRanges));
-  let perMealNutrientRanges = JSON.parse(JSON.stringify(defaultNutrientRanges));
+  let perMealNutrientRanges = JSON.parse(JSON.stringify(nutrientRanges));
     
   
   perMealNutrientRanges = Object.fromEntries(
@@ -104,16 +122,18 @@
   $: adjustNutrientRangesForHealthCondition(healthCondition);
 
   function handleSubmit() {
-    // Process form data here
-    console.log({
+    const userProfile = {
       height,
       weight,
       age,
       sex,
       activityLevel,
       healthCondition,
+      nutrientRanges,
       mealsPerDay,
-    });
+    };
+    chrome.storage.local.set({ userProfile });
+
   }
 </script>
 
@@ -170,6 +190,16 @@
         <option value={option}>{option}</option>
       {/each}
     </select>
+
+    <hr>
+
+    <h2>Recommended Nutrient Ranges per meal:</h2>
+
+
+    <div class="label-per-meal-input">
+      <p>Min Value</p>
+      <p>Max Value</p>
+    </div>
 
     <label for="proteinPerMealMin">Protein per Meal (g):</label>
     <div class="input-group">
@@ -288,39 +318,122 @@
 </main>
 
 <style lang="scss">
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-width: 400px;
-    margin: auto;
+  
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 1rem;
+    // dark green color
   }
 
-  label {
-    font-weight: bold;
+  h2 {
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: normal;
+    margin-bottom: 1rem;
   }
 
-  input,
-  select {
-    padding: 0.5rem;
-    font-size: 1rem;
+  .label-per-meal-input {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1rem;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    height: 50px;
+    z-index: 1;
+
+    p {
+      text-align: center;
+      margin-bottom: 0;
+    }
   }
 
-  .input-group {
-    display: flex;
-    gap: 0.5rem;
+  hr {
+    margin: 1rem 0;
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, transparent, #cccccc, #cccccc, transparent);
   }
+
 
   button {
-    padding: 0.5rem;
-    font-size: 1rem;
-    background-color: #007bff;
-    color: white;
+    width: 100%;
+    height: 50px;
+    border-radius: 7px;
+    background-color: hsl(0, 0%, 90%);
     border: none;
+    font-size: 1.1em;
     cursor: pointer;
   }
 
-  button:hover {
-    background-color: #0056b3;
+  main {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 1rem;
+
+    @media (max-width: 500px) {
+      padding: 0.5rem;
+    }
+
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+
+    border-radius: 16px;
+    background-color: #c6f8a530;
+    box-shadow: 0 10px 30px #c6f8a57c;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+
+    
+
+
+
   }
+
+
+  input {
+    margin-bottom: 1rem;
+    width: 100%;
+    height: 50px;
+    border-radius: 7px;
+    background-color: transparent;
+    border: 1px solid hsl(120, 100%, 10%);
+    ;
+    padding: 5px 10px;
+    font-size: 1em;
+    box-sizing: border-box;
+  }
+  select {
+    margin-bottom: 1rem;
+    width: 100%;
+    height: 50px;
+    border-radius: 7px;
+    background-color: transparent;
+    border: 1px solid hsl(120, 100%, 10%);
+    padding: 5px 10px;
+    font-size: 1em;
+    box-sizing: border-box;
+  }
+  option {
+    font-size: 1em;
+    
+  }
+  .input-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+
+    input{
+      width: unset;
+    }
+
+  }
+
+  label {
+    margin-bottom: 1rem;
+  }
+
 </style>
