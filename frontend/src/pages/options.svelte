@@ -1,6 +1,6 @@
 <script>
 
-  import UserProfile from "../lib/UserProfile.svelte";"../lib/UserProfile.svelte";
+  import UserProfile from "../lib/UserProfile.svelte";
 
 </script>
 <div>

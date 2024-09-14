@@ -1,42 +1,66 @@
 // content.js
 
-let recipe;
 
-// Function to find and log the <script type="application/ld+json"> tag
 function findLdJsonScript() {
-    console.log('Running findLdJsonScript function...');
+
+    let ingredients;
+
     const ldJsonScripts = document.querySelectorAll('script[type="application/ld+json"]');
+    
     ldJsonScripts.forEach(script => {
 
         const jsonContent = JSON.parse(script.textContent);
         console.log('JSON content:', jsonContent);
-        // check if there is a @graph or @ recipe if there is a @graph then check inside that for @recipe
-        if (jsonContent['@graph']) {
-            console.log('Graph:', jsonContent['@graph']);
-            jsonContent['@graph'].forEach(graph => {
-                if (graph['@type'] === 'Recipe') {
-                    recipe = graph;
+
+        // if json content is a array
+        if (Array.isArray(jsonContent)) {
+            jsonContent.forEach(content => {
+                // if content['@type']  is an array
+                if (Array.isArray(content['@type'])) {
+                    console.log("array of types");
+                    
+                    content['@type'].forEach(type => {
+                        if (type === 'Recipe') {
+                            ingredients = content['recipeIngredient'];
+                        }
+                    });
+                }
+                if (content['@type'] === 'Recipe') {
+                    console.log("type is recipe");
+                    ingredients = content['recipeIngredient'];
                 }
             });
-        } else if (jsonContent['@type'] === 'Recipe') {
-            recipe = jsonContent;
+        } else {
+            console.log('Single content');
+            if (jsonContent['@type'] === 'Recipe') {
+                ingredients = jsonContent['recipeIngredient'];   
+            }
+            else if (jsonContent['@graph']) {
+                jsonContent['@graph'].forEach(content => {
+                    if (content['@type'] === 'Recipe') {
+                        ingredients = content['recipeIngredient'];
+                    }
+                });
+            }
         }
-
+        
     });
 
-    if (recipe) {
 
-        let ingredients = recipe.recipeIngredient;
-
-        chrome.storage.local.set({ currentIngredients: ingredients }, function() {
-            console.log('Ingredients saved to local storage');
+    if (ingredients) {
+        
+        chrome.storage.local.set({currentIngredients: ingredients}, () => {
+            console.log('Ingredients set to storage');
         });
+        
+    } else {
+        console.log('No ingredients found');
+        
     }
-
+    
 }
 
-// Run the function when the DOM is fully loaded
+
+
 
 findLdJsonScript();
-console.log('Content script loaded');
-

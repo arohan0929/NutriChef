@@ -12,7 +12,9 @@ export default defineConfig({
         options: resolve(__dirname, 'options.html'),
         popup: resolve(__dirname, 'popup.html'),
       }
-    }
+    },
+    minify: false,
+    sourcemap: true
   },
   base: './',
 })
