@@ -1,4 +1,4 @@
-import './app.css'
+import './popup.css'
 import App from './pages/popup.svelte'
 
 const app = new App({
