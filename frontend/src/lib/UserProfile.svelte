@@ -17,42 +17,24 @@
   let healthCondition: string = "None"; // default value
   let mealsPerDay: number = 3; // default value
 
-  let nutrientRanges = { ...defaultNutrientRanges };
-  let perMealNutrientRanges = { ...defaultNutrientRanges };
 
-  $: {
-    const { proteins, carbohydrates, fats, fiber, sodium, cholesterol, sugar } = nutrientRanges;
-    perMealNutrientRanges = {
-      proteins: {
-        min: proteins.min / mealsPerDay,
-        max: proteins.max / mealsPerDay,
-      },
-      carbohydrates: {
-        min: carbohydrates.min / mealsPerDay,
-        max: carbohydrates.max / mealsPerDay,
-      },
-      fats: {
-        min: fats.min / mealsPerDay,
-        max: fats.max / mealsPerDay,
-      },
-      fiber: {
-        min: fiber.min / mealsPerDay,
-        max: fiber.max / mealsPerDay,
-      },
-      sodium: {
-        min: sodium.min / mealsPerDay,
-        max: sodium.max / mealsPerDay,
-      },
-      cholesterol: {
-        min: cholesterol.min / mealsPerDay,
-        max: cholesterol.max / mealsPerDay,
-      },
-      sugar: {
-        min: sugar.min / mealsPerDay,
-        max: sugar.max / mealsPerDay,
-      },
-    };
-  }
+
+
+  let nutrientRanges = JSON.parse(JSON.stringify(defaultNutrientRanges));
+  let perMealNutrientRanges = JSON.parse(JSON.stringify(defaultNutrientRanges));
+    
+  
+  perMealNutrientRanges = Object.fromEntries(
+      Object.entries(nutrientRanges).map(
+        ([key, value]: [string, { min: number; max: number }]) => [
+          key,
+          {
+            min: Math.round(value.min / mealsPerDay),
+            max: Math.round(value.max / mealsPerDay),
+          },
+        ],
+      ),
+    );
 
   const activityLevels = [
     "sedentary",
@@ -76,6 +58,10 @@
   const mealOptions = [1, 2, 3, 4, 5, 6];
 
   function adjustNutrientRangesForHealthCondition(condition: string) {
+    nutrientRanges = JSON.parse(JSON.stringify(defaultNutrientRanges));
+
+    console.log(condition);
+
     if (condition === "Diabetes") {
       nutrientRanges.carbohydrates.min = 130; // minimum needed for brain function
       nutrientRanges.carbohydrates.max = 180; // controlled max for blood glucose management
@@ -100,11 +86,19 @@
     } else if (condition === "Thyroid Disorders") {
       nutrientRanges.proteins.min = 60; // Increase protein for metabolism support
       nutrientRanges.fiber.min = 30; // Support digestion with fiber
-    } else if (condition === "None") {
-      nutrientRanges = { ...defaultNutrientRanges };
     }
 
-    nutrientRanges = { ...nutrientRanges };
+    perMealNutrientRanges = Object.fromEntries(
+      Object.entries(nutrientRanges).map(
+        ([key, value]: [string, { min: number; max: number }]) => [
+          key,
+          {
+            min: Math.round(value.min / mealsPerDay),
+            max: Math.round(value.max / mealsPerDay),
+          },
+        ],
+      ),
+    );
   }
 
   $: adjustNutrientRangesForHealthCondition(healthCondition);
@@ -183,16 +177,12 @@
         type="number"
         id="proteinPerMealMin"
         bind:value={perMealNutrientRanges.proteins.min}
-        min="0"
-        max="100"
         placeholder="Min"
       />
       <input
         type="number"
         id="proteinPerMealMax"
         bind:value={perMealNutrientRanges.proteins.max}
-        min="0"
-        max="100"
         placeholder="Max"
       />
     </div>
@@ -203,16 +193,12 @@
         type="number"
         id="carbohydratesPerMealMin"
         bind:value={perMealNutrientRanges.carbohydrates.min}
-        min="0"
-        max="100"
         placeholder="Min"
       />
       <input
         type="number"
         id="carbohydratesPerMealMax"
         bind:value={perMealNutrientRanges.carbohydrates.max}
-        min="0"
-        max="100"
         placeholder="Max"
       />
     </div>
@@ -223,16 +209,12 @@
         type="number"
         id="fatsPerMealMin"
         bind:value={perMealNutrientRanges.fats.min}
-        min="0"
-        max="100"
         placeholder="Min"
       />
       <input
         type="number"
         id="fatsPerMealMax"
         bind:value={perMealNutrientRanges.fats.max}
-        min="0"
-        max="100"
         placeholder="Max"
       />
     </div>
@@ -243,16 +225,12 @@
         type="number"
         id="fibrePerMealMin"
         bind:value={perMealNutrientRanges.fiber.min}
-        min="0"
-        max="100"
         placeholder="Min"
       />
       <input
         type="number"
         id="fibrePerMealMax"
         bind:value={perMealNutrientRanges.fiber.max}
-        min="0"
-        max="100"
         placeholder="Max"
       />
     </div>
@@ -263,16 +241,12 @@
         type="number"
         id="sodiumPerMealMin"
         bind:value={perMealNutrientRanges.sodium.min}
-        min="0"
-        max="5000"
         placeholder="Min"
       />
       <input
         type="number"
         id="sodiumPerMealMax"
         bind:value={perMealNutrientRanges.sodium.max}
-        min="0"
-        max="5000"
         placeholder="Max"
       />
     </div>
@@ -283,16 +257,12 @@
         type="number"
         id="cholesterolPerMealMin"
         bind:value={perMealNutrientRanges.cholesterol.min}
-        min="0"
-        max="500"
         placeholder="Min"
       />
       <input
         type="number"
         id="cholesterolPerMealMax"
         bind:value={perMealNutrientRanges.cholesterol.max}
-        min="0"
-        max="500"
         placeholder="Max"
       />
     </div>
@@ -303,16 +273,12 @@
         type="number"
         id="sugarPerMealMin"
         bind:value={perMealNutrientRanges.sugar.min}
-        min="0"
-        max="100"
         placeholder="Min"
       />
       <input
         type="number"
         id="sugarPerMealMax"
         bind:value={perMealNutrientRanges.sugar.max}
-        min="0"
-        max="100"
         placeholder="Max"
       />
     </div>
