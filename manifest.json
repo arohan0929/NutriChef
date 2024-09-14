@@ -1,0 +1,11 @@
+{
+    "manifest_version": 3,
+    "name": "VTHacks12",
+    "version": "1.0.0",
+    "description": "VTHacks12 project",
+
+    "action": {
+        "default_popup": "frontend/dist/popup.html"
+    }
+
+}
