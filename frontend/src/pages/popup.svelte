@@ -5,8 +5,8 @@
 
   import { onMount } from "svelte";
 
-  const apiKey = "qdgr";
-  const appId = "fnwekg"; // Replace with your Nutritionix App ID
+  const apiKey = "c34b9168fcecd57dc0bd78537c33c8a4";
+  const appId = "67c90523"; // Replace with your Nutritionix App ID
 
   async function getCurrentIngredients() {
     return new Promise((resolve, reject) => {
@@ -17,6 +17,34 @@
         resolve(result["currentIngredients"]);
       });
     });
+  }
+
+  function cleanNutritionixData(obj) {
+    let cleanArr = [];
+    let foods = obj.foods;
+    foods.forEach((food) => {
+      cleanArr.push({
+        name: food.food_name,
+        qty: food.serving_qty,
+        unit: food.serving_unit,
+        wtg: food.serving_weight_grams,
+        calor: food.nf_calories,
+        fat: food.nf_total_fat,
+        saturatedFat: food.nf_saturated_fat,
+        cholestrol: food.nf_cholesterol,
+        sodium: food.nf_sodium,
+        carbs: food.nf_total_carbohydrate,
+        fiber: food.nf_dietary_fiber,
+        sugars: food.nf_sugars,
+        protein: food.nf_protein,
+      });
+    });
+
+    const uniqueFoods = cleanArr.filter((obj, index, self) => {
+      return index === self.findIndex((item) => item.name === obj.name);
+    });
+
+    return uniqueFoods;
   }
 
   async function getNutrition() {
@@ -79,7 +107,7 @@
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      console.log(cleanAPI(data));
+      console.log(cleanNutritionixData(data));
     } catch (error) {
       console.error("Error fetching nutritional information:", error);
     }

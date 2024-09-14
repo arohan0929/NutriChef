@@ -98,33 +98,7 @@ app.get("/api/get-suggested-ingredients", async (req, res) => {
 });
 
 
-function cleanNutritionixData(obj) {
-  let cleanArr = [];
-  let foods = obj.foods;
-  foods.forEach((food) => {
-    cleanArr.push({
-      name: food.food_name,
-      qty: food.serving_qty,
-      unit: food.serving_unit,
-      wtg: food.serving_weight_grams,
-      calor: food.nf_calories,
-      fat: food.nf_total_fat,
-      saturatedFat: food.nf_saturated_fat,
-      cholestrol: food.nf_cholesterol,
-      sodium: food.nf_sodium,
-      carbs: food.nf_total_carbohydrate,
-      fiber: food.nf_dietary_fiber,
-      sugars: food.nf_sugars,
-      protein: food.nf_protein,
-    });
-  });
 
-  const uniqueFoods = cleanArr.filter((obj, index, self) => {
-    return index === self.findIndex((item) => item.name === obj.name);
-  });
-
-  return uniqueFoods;
-}
 
 
 app.get("/", (req, res) => {
