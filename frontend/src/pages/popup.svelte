@@ -19,7 +19,6 @@
     });
   }
 
-
   async function getNutrition() {
     let ingredients = await getCurrentIngredients();
     // @ts-ignore
@@ -60,10 +59,34 @@
         .replace(/\s*\)/g, ")");
     });
 
+    try {
+      const response = await fetch(
+        "https://trackapi.nutritionix.com/v2/natural/nutrients",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-app-id": appId,
+            "x-app-key": apiKey,
+          },
+          body: JSON.stringify({
+            // @ts-ignore
+            query: ingredients.join(","),
+          }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log(cleanAPI(data));
+    } catch (error) {
+      console.error("Error fetching nutritional information:", error);
+    }
+
     console.log(ingredients);
 
     // return;
- 
   }
 
   //health score algorithm
