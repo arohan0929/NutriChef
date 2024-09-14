@@ -4,6 +4,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
+    "node-fetch": "^3.3.2",
     "openai": "^4.61.0"
   },
   "scripts": {
@@ -11,6 +12,7 @@
     "devStart": "nodemon backend/main.js"
   },
   "main": "main.js",
+  "type": "module",
   "devDependencies": {
     "nodemon": "^3.1.4"
   }

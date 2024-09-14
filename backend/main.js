@@ -1,10 +1,15 @@
-const { AzureOpenAI } = require("openai");
-const express = require("express");
-var cors = require('cors')
+import { AzureOpenAI } from "openai";
+import express from "express";
+import cors from 'cors';
+import fetch from 'node-fetch';
 const app = express();
 const port = 3000;
 
-require("dotenv").config();
+// require("dotenv").config();
+import dotenv from 'dotenv';
+dotenv.config();
+
+app.use(cors());
 
 async function aiSuggestions(name, ingredients, prompts) {
 
@@ -57,11 +62,11 @@ async function aiSuggestions(name, ingredients, prompts) {
   }
 }
 
-let corsOptions = {
-  origin: 'http://localhost:5173',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-app.get("/api/get-suggested-ingredients", cors(corsOptions), async (req, res) => {
+// let corsOptions = {
+//   origin: 'http://localhost:5173',
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
+app.get("/api/get-suggested-ingredients", async (req, res) => {
 
   // get ingredients from req and the prompt
   const name = req.body.name;
@@ -121,11 +126,21 @@ function cleanNutritionixData(obj) {
   return uniqueFoods;
 }
 
-app.get("/api/get-ingredients-nutrition", cors(corsOptions), async (req, res) => {
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+app.get("/api/get-ingredients-nutrition",  async (req, res) => {
+  console.log("Request received");
+  
   // get ingredients from req
-  const ingredients = req.body.ingredients;
-
+  const ingredients = req.query.ingredients;
+  console.log("Ingredients: ", ingredients);
+  
+  if (!ingredients) {
+    return res.status(400).send("Missing ingredients");
+  }
 
   try {
     const response = await fetch(
@@ -138,15 +153,21 @@ app.get("/api/get-ingredients-nutrition", cors(corsOptions), async (req, res) =>
           "x-app-key": process.env.NUTRITIONIX_API_KEY,
         },
         body: JSON.stringify({
+          // @ts-ignore
           query: ingredients,
         }),
-      },
-    );
+    });
+
+
+    console.log("Response: ", response);
 
     if (!response.ok) {
+      let error = await response.json();
+      console.log("Error: ", error);
+      
       throw new Error("Network response was not ok");
     }
-
+ 
     const data = await response.json();
     return res.send(cleanNutritionixData(data));
   } catch (error) {
