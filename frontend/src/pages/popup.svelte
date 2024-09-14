@@ -19,33 +19,7 @@
     });
   }
 
-  function cleanAPI(obj) {
-    let cleanArr = [];
-    let foods = obj.foods;
-    foods.forEach((food) => {
-      cleanArr.push({
-        name: food.food_name,
-        qty: food.serving_qty,
-        unit: food.serving_unit,
-        wtg: food.serving_weight_grams,
-        calor: food.nf_calories,
-        fat: food.nf_total_fat,
-        saturatedFat: food.nf_saturated_fat,
-        cholestrol: food.nf_cholesterol,
-        sodium: food.nf_sodium,
-        carbs: food.nf_total_carbohydrate,
-        fiber: food.nf_dietary_fiber,
-        sugars: food.nf_sugars,
-        protein: food.nf_protein,
-      });
-    });
 
-    const uniqueFoods = cleanArr.filter((obj, index, self) => {
-      return index === self.findIndex((item) => item.name === obj.name);
-    });
-
-    return uniqueFoods;
-  }
   async function getNutrition() {
     let ingredients = await getCurrentIngredients();
     // @ts-ignore
@@ -89,32 +63,7 @@
     console.log(ingredients);
 
     // return;
-    try {
-      const response = await fetch(
-        "https://trackapi.nutritionix.com/v2/natural/nutrients",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-app-id": appId,
-            "x-app-key": apiKey,
-          },
-          body: JSON.stringify({
-            // @ts-ignore
-            query: ingredients.join(","),
-          }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-      return cleanAPI(data);
-    } catch (error) {
-      console.error("Error fetching nutritional information:", error);
-    }
+ 
   }
 
   //health score algorithm
