@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  
+
   const defaultNutrientRanges = {
     carbohydrates: { min: 225, max: 325 }, // grams
     proteins: { min: 50, max: 175 }, // grams
@@ -18,7 +18,6 @@
   let activityLevel: string = "moderate"; // default value
   let healthCondition: string = "None"; // default value
   let mealsPerDay: number = 3; // default value
-
 
   onMount(() => {
     // Fetch user data from the server here
@@ -40,19 +39,18 @@
 
   let nutrientRanges = JSON.parse(JSON.stringify(defaultNutrientRanges));
   let perMealNutrientRanges = JSON.parse(JSON.stringify(nutrientRanges));
-    
-  
+
   perMealNutrientRanges = Object.fromEntries(
-      Object.entries(nutrientRanges).map(
-        ([key, value]: [string, { min: number; max: number }]) => [
-          key,
-          {
-            min: Math.round(value.min / mealsPerDay),
-            max: Math.round(value.max / mealsPerDay),
-          },
-        ],
-      ),
-    );
+    Object.entries(nutrientRanges).map(
+      ([key, value]: [string, { min: number; max: number }]) => [
+        key,
+        {
+          min: Math.round(value.min / mealsPerDay),
+          max: Math.round(value.max / mealsPerDay),
+        },
+      ]
+    )
+  );
 
   const activityLevels = [
     "sedentary",
@@ -114,8 +112,8 @@
             min: Math.round(value.min / mealsPerDay),
             max: Math.round(value.max / mealsPerDay),
           },
-        ],
-      ),
+        ]
+      )
     );
   }
 
@@ -133,7 +131,6 @@
       mealsPerDay,
     };
     chrome.storage.local.set({ userProfile });
-
   }
 </script>
 
@@ -150,14 +147,14 @@
       max="300"
     />
 
-    <label for="weight">Weight (kg):</label>
+    <label for="weight">Weight (lbs):</label>
     <input
       type="number"
       id="weight"
       bind:value={weight}
       required
-      min="10"
-      max="300"
+      min="0"
+      max="1000"
     />
 
     <label for="age">Age:</label>
@@ -191,10 +188,9 @@
       {/each}
     </select>
 
-    <hr>
+    <hr />
 
     <h2>Recommended Nutrient Ranges per meal:</h2>
-
 
     <div class="label-per-meal-input">
       <p>Min Value</p>
@@ -313,13 +309,11 @@
       />
     </div>
 
-    <button type="submit">Submit</button>
+    <button class="submit-button" type="submit">Submit</button>
   </form>
 </main>
 
 <style lang="scss">
-  
-  
   h1 {
     text-align: center;
     margin-bottom: 1rem;
@@ -333,16 +327,38 @@
     margin-bottom: 1rem;
   }
 
+  .submit-button{
+    width: 66%;
+    height: 50px;
+    border-radius: 7px;
+    background-color: #bcf4b3(0, 0%, 90%);
+    border: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 1em;
+    box-sizing: border-box;
+    box-shadow: 2px 2.5px 0 #598033;
+    transition: ease 0.20s; // Changed 'hover' to 'transition'
+    margin: 0 auto;
+    display: block; /* Ensures margin: auto works */
+  }
   .label-per-meal-input {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    font-family: "SF Pro";
+    padding: 0.875rem;
     margin-bottom: 1rem;
-    position: sticky;
-    top: 0;
-    background-color: white;
+    width: 100%;
     height: 50px;
-    z-index: 1;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    border: 1px solid hsl(120, 100%, 10%);
+    padding: 5px 10px;
+    font-size: 1em;
+    box-sizing: border-box;
+    box-shadow: 2px 2.5px 0 #598033;
+    transition: ease 0.20s;
 
     p {
       text-align: center;
@@ -353,87 +369,119 @@
   hr {
     margin: 1rem 0;
     border: 0;
-    height: 1px;
-    background-image: linear-gradient(to right, transparent, #cccccc, #cccccc, transparent);
+    height: 1.5px;
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      #05b548,
+      #05b548,
+      transparent
+    );
   }
-
 
   button {
-    width: 100%;
-    height: 50px;
-    border-radius: 7px;
-    background-color: hsl(0, 0%, 90%);
-    border: none;
-    font-size: 1.1em;
-    cursor: pointer;
-  }
+  width: 66%;
+  height: 50px;
+  border-radius: 7px;
+  background-color: #bcf4b3; /* Updated line */
+  border: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 5px 10px;
+  font-size: 1em;
+  box-sizing: border-box;
+  box-shadow: 2px 2.5px 0 #598033;
+  transition: ease 0.20s;
+  margin: 0 auto;
+}
+
 
   main {
     max-width: 500px;
     margin: 0 auto;
     padding: 1rem;
+    font-family: "SF Pro";
+    
+
+    
 
     @media (max-width: 500px) {
-      padding: 0.5rem;
+      padding: 1rem;
     }
 
     margin-top: 2rem;
     margin-bottom: 2rem;
 
-
-    border-radius: 16px;
+    border-radius: 1.75rem;
     background-color: #c6f8a530;
-    box-shadow: 0 10px 30px #c6f8a57c;
+    box-shadow: 5px 5px  #598033;
     backdrop-filter: blur(5px);
-    border: 1px solid rgba( 255, 255, 255, 0.18 );
-
-    
-
-
+    border: 2px solid #000;
+    outline: none;
 
   }
 
 
   input {
+    font-family: "SF Pro";
+    padding: 0.875rem;
     margin-bottom: 1rem;
     width: 100%;
     height: 50px;
-    border-radius: 7px;
+    border-radius: 0.5rem;
     background-color: transparent;
     border: 1px solid hsl(120, 100%, 10%);
-    ;
     padding: 5px 10px;
     font-size: 1em;
     box-sizing: border-box;
+    box-shadow: 2px 2.5px 0 #598033;
+    transition: ease 0.20s;
+  }
+
+  input:focus {
+    box-shadow: 5.5px 7px 0 #598035;
+  }
+
+  input:focus-visible {
+    outline: none;
   }
   select {
+    font-family: "SF Pro";
+    padding: 0.875rem;
     margin-bottom: 1rem;
     width: 100%;
     height: 50px;
-    border-radius: 7px;
+    border-radius: 0.5rem;
     background-color: transparent;
     border: 1px solid hsl(120, 100%, 10%);
     padding: 5px 10px;
     font-size: 1em;
     box-sizing: border-box;
+    box-shadow: 2.5px 3px 0 #598035;
+    transition: ease 0.20s;
+  }
+
+  select:focus {
+    box-shadow: 5.5px 7px 0 #598035;
+  }
+
+  select:focus-visible {
+    outline: none;
   }
   option {
     font-size: 1em;
-    
   }
   .input-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
 
-    input{
+    input {
       width: unset;
     }
-
   }
 
   label {
-    margin-bottom: 1rem;
+    margin-bottom: 5rem;
   }
-
 </style>

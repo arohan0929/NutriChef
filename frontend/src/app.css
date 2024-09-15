@@ -2,16 +2,16 @@
 
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color: hsl(0, 0, 10%);
   color: hsl(120, 100%, 8%);
 
-  background: linear-gradient(45deg, #a1f8aa 0%, #d7e39c 100%);
+  /* background: linear-gradient(to top right, #bcf4b3 0%, #d6f6d1 100%); */
   
-  background: linear-gradient(45deg, #c6f8a5 0%, #d7e39c 100%);
+  background: linear-gradient(to top right, #80f76e 0%, #d6f6d1 100%);
   /* background: #B4E4CA; */
   
 
