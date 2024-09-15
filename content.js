@@ -72,24 +72,38 @@ function findLdJsonScript() {
         
     });
 
+    if (!servings) {
+        servings = 1;
+    }
 
-    if (ingredients && servings) {
-        
-
+    if (ingredients) {
         chrome.storage.local.set({currentIngredients: ingredients, servings: servings}, function() {
             console.log('Ingredients are set to: ', ingredients);
             console.log('Servings are set to: ', servings);
         });
 
-        
-    } else if (ingredients) {
-        chrome.storage.local.set({currentIngredients: ingredients, servings: 1}, function() {
-            console.log('Ingredients are set to: ', ingredients);
-            console.log('Servings are set to: ', servings);
-        });
+        if (name) {
+            chrome.storage.local.set({recipeName: name}, function() {
+                console.log('Recipe name is set to: ', name);
+            });
+        }
+
+        if (image && link && description) {
+            chrome.storage.local.set({recipeImage: image, recipeLink: link, recipeDescription: description}, function() {
+                console.log('Recipe image is set to: ', image);
+                console.log('Recipe link is set to: ', link);
+                console.log('Recipe description is set to: ', description);
+            });
+        }
+
     } else {    
-        console.log('Ingredients not found');
+        chrome.storage.local.set({currentIngredients: null, servings: null}, function() {
+            console.log('Ingredients are set to: ', null);
+            console.log('Servings are set to: ', null);
+        });
     }
+
+
     
 }
 

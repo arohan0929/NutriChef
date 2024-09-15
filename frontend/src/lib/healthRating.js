@@ -1,4 +1,16 @@
-export function calculateHealthScore(ingredients, servings) {
+async function getCurrentUserProfile() {
+  return new Promise((resolve, reject) => {
+      chrome.storage.local.get(["userProfile"], async function (result) {
+          if (chrome.runtime.lastError) {
+              return reject(chrome.runtime.lastError);
+          }
+          resolve(result["userProfile"]);
+      });
+  });
+}
+
+
+export async function calculateHealthScore(ingredients, servings) {
 
   if (!servings) {
     servings = 1;
@@ -15,6 +27,12 @@ export function calculateHealthScore(ingredients, servings) {
     cholesterol: { min: 0, max: 300 }, // mg
     sugar: { min: 10, max: 15.5 }, // grams
   };
+
+  // get chrome storage local
+  let user = await getCurrentUserProfile();
+  if (user) {
+    nutrientRanges = user.nutrientRanges;
+  }
  
 // standarize
   let recipeNutrients = {

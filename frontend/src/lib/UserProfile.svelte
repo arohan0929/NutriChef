@@ -3,8 +3,9 @@
 
   const defaultNutrientRanges = {
     carbohydrates: { min: 225, max: 325 }, // grams
-    proteins: { min: 50, max: 175 }, // grams
-    fats: { min: 44, max: 77 }, // grams
+    protein: { min: 60, max: 100 }, // grams
+    fat: { min: 44, max: 77 }, // grams
+    saturatedFat: { min: 0, max: 22 }, // grams
     fiber: { min: 25, max: 38 }, // grams
     sodium: { min: 1500, max: 2300 }, // mg
     cholesterol: { min: 0, max: 300 }, // mg
@@ -40,17 +41,7 @@
   let nutrientRanges = JSON.parse(JSON.stringify(defaultNutrientRanges));
   let perMealNutrientRanges = JSON.parse(JSON.stringify(nutrientRanges));
 
-  perMealNutrientRanges = Object.fromEntries(
-    Object.entries(nutrientRanges).map(
-      ([key, value]: [string, { min: number; max: number }]) => [
-        key,
-        {
-          min: Math.round(value.min / mealsPerDay),
-          max: Math.round(value.max / mealsPerDay),
-        },
-      ]
-    )
-  );
+
 
   const activityLevels = [
     "Sedentary",
@@ -76,7 +67,6 @@
   function adjustNutrientRangesForHealthCondition(condition: string) {
     nutrientRanges = JSON.parse(JSON.stringify(defaultNutrientRanges));
 
-    console.log(condition);
 
     if (condition === "Diabetes") {
       nutrientRanges.carbohydrates.min = 130; // minimum needed for brain function
@@ -84,23 +74,24 @@
       nutrientRanges.fiber.min = 30; // Increase fiber for glucose control
       nutrientRanges.sugar.max = 25; // Reduce sugar intake
     } else if (condition === "High Cholesterol") {
-      nutrientRanges.fats.max = 60; // Lower fat intake
+      nutrientRanges.fat.max = 60; // Lower fat intake
+      nutrientRanges.saturatedFat.max = 20; // Limit saturated fat
       nutrientRanges.cholesterol.max = 150; // Strict cholesterol limit
       nutrientRanges.fiber.min = 30; // Increase fiber to reduce LDL cholesterol
     } else if (condition === "Hypertension") {
       nutrientRanges.sodium.max = 1500; // Recommended sodium limit for hypertension
-      nutrientRanges.fats.max = 70; // Limit fats, focusing on unsaturated fats
+      nutrientRanges.fat.max = 70; // Limit fat, focusing on unsaturated fat
       nutrientRanges.fiber.min = 30; // Fiber helps in blood pressure regulation
     } else if (condition === "Obesity") {
-      nutrientRanges.fats.max = 55; // Reduce fats to control caloric intake
+      nutrientRanges.fat.max = 55; // Reduce fat to control caloric intake
       nutrientRanges.carbohydrates.min = 150; // Lower carbs for calorie reduction
       nutrientRanges.fiber.min = 30; // High fiber intake to increase satiety
     } else if (condition === "Heart Disease") {
       nutrientRanges.cholesterol.max = 150; // Strict cholesterol control
-      nutrientRanges.fats.max = 60; // Limit unhealthy fats
+      nutrientRanges.fat.max = 60; // Limit unhealthy fat
       nutrientRanges.fiber.min = 30; // Increase fiber for heart health
     } else if (condition === "Thyroid Disorders") {
-      nutrientRanges.proteins.min = 60; // Increase protein for metabolism support
+      nutrientRanges.protein.min = 60; // Increase protein for metabolism support
       nutrientRanges.fiber.min = 30; // Support digestion with fiber
     }
 
@@ -131,7 +122,25 @@
       mealsPerDay,
     };
     chrome.storage.local.set({ userProfile });
+    alert("Profile saved successfully!");
   }
+
+  function updateMealsPerDay(e){
+    mealsPerDay = parseInt(e.target.value);
+    perMealNutrientRanges = Object.fromEntries(
+      Object.entries(nutrientRanges).map(
+        ([key, value]: [string, { min: number; max: number }]) => [
+          key,
+          {
+            min: Math.round(value.min / mealsPerDay),
+            max: Math.round(value.max / mealsPerDay),
+          },
+        ]
+      )
+    );
+    console.log(perMealNutrientRanges);
+  }
+
 </script>
 
 <main>
@@ -182,7 +191,7 @@
     </select>
 
     <label for="mealsPerDay">Number of Meals per Day:</label>
-    <select id="mealsPerDay" bind:value={mealsPerDay} required>
+    <select id="mealsPerDay" required on:change={updateMealsPerDay} value={mealsPerDay}>
       {#each mealOptions as option}
         <option value={option}>{option}</option>
       {/each}
@@ -202,13 +211,13 @@
       <input
         type="number"
         id="proteinPerMealMin"
-        bind:value={perMealNutrientRanges.proteins.min}
+        bind:value={perMealNutrientRanges.protein.min}
         placeholder="Min"
       />
       <input
         type="number"
         id="proteinPerMealMax"
-        bind:value={perMealNutrientRanges.proteins.max}
+        bind:value={perMealNutrientRanges.protein.max}
         placeholder="Max"
       />
     </div>
@@ -229,18 +238,18 @@
       />
     </div>
 
-    <label for="fatsPerMealMin">Fats per Meal (g):</label>
+    <label for="fatPerMealMin">fat per Meal (g):</label>
     <div class="input-group">
       <input
         type="number"
-        id="fatsPerMealMin"
-        bind:value={perMealNutrientRanges.fats.min}
+        id="fatPerMealMin"
+        bind:value={perMealNutrientRanges.fat.min}
         placeholder="Min"
       />
       <input
         type="number"
-        id="fatsPerMealMax"
-        bind:value={perMealNutrientRanges.fats.max}
+        id="fatPerMealMax"
+        bind:value={perMealNutrientRanges.fat.max}
         placeholder="Max"
       />
     </div>

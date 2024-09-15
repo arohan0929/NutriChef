@@ -1,5 +1,5 @@
 <script>
-// @ts-nocheck
+  // @ts-nocheck
 
   import { calculateHealthScore } from "../lib/healthRating";
 
@@ -9,7 +9,7 @@
 
   import { onMount } from "svelte";
 
-  const apiKey = "c34b9168fcecd57dc0bd78537c33c8a4";
+  const apiKey = "6ade810a10bee1395acfa169e52e04e7";
   const appId = "67c90523"; // Replace with your Nutritionix App ID
 
   async function getCurrentIngredients() {
@@ -32,6 +32,18 @@
       });
     });
   }
+
+  async function getCurrentUserProfile() {
+  return new Promise((resolve, reject) => {
+      chrome.storage.local.get(["userProfile"], async function (result) {
+          if (chrome.runtime.lastError) {
+              return reject(chrome.runtime.lastError);
+          }
+          resolve(result["userProfile"]);
+      });
+  });
+}
+
 
   function cleanNutritionixData(obj) {
     let cleanArr = [];
@@ -87,7 +99,7 @@
       return ingredient.replace(/\$\d+(\.\d+)?/, "");
     });
 
-    // whenever there is a g like 100g make it into 100 grams 
+    // whenever there is a g like 100g make it into 100 grams
     ingredients = ingredients.map((ingredient) => {
       return ingredient.replace(/\s*(\d+)\s*g/, "$1 grams of");
     });
@@ -109,7 +121,6 @@
       return ingredient.replace(/\s*(\d+)\s*ml/, "$1milliliters");
     });
 
-
     // whenever there is a comma put everything after it in parenthesis
     ingredients = ingredients.map((ingredient) => {
       return ingredient.replace(/\s*,\s*(.*)/, "($1)");
@@ -127,7 +138,6 @@
 
     console.log(ingredients);
     console.log(ingredients.join(","));
-
 
     try {
       const response = await fetch(
@@ -160,20 +170,39 @@
   //health score algorithm
   let nutrition;
   let score;
+
+  let siteSupported = true;
+  let signedIn = false;
+
   onMount(async () => {
+
+    let user = await getCurrentUserProfile();
+    if (user) {
+      signedIn = true;
+    }
+
     nutrition = await getNutrition();
+    console.log(nutrition);
+  
+    if (!nutrition) {
+      siteSupported = false;
+      return;
+    }
+
     let servings = await getServings();
+    console.log(servings);
+    
     // if servings is an array, get the first element
     if (Array.isArray(servings)) {
       servings = servings[0];
     }
     console.log(nutrition);
-    score = calculateHealthScore(nutrition, servings);
+    score = await calculateHealthScore(nutrition, servings);
     console.log(score);
     chrome.storage.local.set({ nutrition });
   });
 
-  import logo from '../../public/logo.png'; // Adjust the path as needed
+  import logo from "../../public/logo.png"; // Adjust the path as needed
 </script>
 
 <!-- <script>
@@ -184,7 +213,7 @@
 <!-- {#if ingredients}
   <HealthRating  ingredients={ingredients} />
 {/if} -->
-   
+
 <header>
   <img src={logo} alt="Logo" class="logo" />
   <!-- get the day of the week with the shortned day like 9/13 -->
@@ -196,7 +225,6 @@
     })}
   </h2> -->
 
-  
   <a
     href="options.html"
     target="_blank"
@@ -204,8 +232,8 @@
     aria-hidden="true"
   >
     <svg
-      width="28"
-      height="26"
+      width="25"
+      height="25"
       viewBox="0 0 21 20"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -217,22 +245,35 @@
     </svg>
   </a>
 </header>
-<main>
-  <div class="rating">
-    {#if nutrition && score}
-      <HealthRating score={score.averageScore} />
-    {/if}
-  </div>
 
-  <div class="detail-reports-btns">
-    <a href="report.html" target="_blank"> View Full Report </a>
-    <a href="report.html?improve=true" target="_blank"> Improve Health Score </a>
-  </div>
+{#if siteSupported && signedIn}
+  <main>
+    <div class="rating">
+      {#if nutrition && score}
+        <HealthRating score={score.averageScore} />
+      {/if}
+    </div>
 
-
-</main>
+    <div class="detail-reports-btns">
+      <a href="report.html" target="_blank"> View Full Report </a>
+      <a href="report.html?improve=true" target="_blank">
+        Improve Health Score
+      </a>
+    </div>
+  </main>
+{:else if !signedIn}
+  <p class="site-not-supported">Please enter your details in the profile/options page</p>
+{:else}
+  <p class="site-not-supported">Site does not have a recipe or site is not supported yet</p>
+{/if}
 
 <style lang="scss">
+  .site-not-supported {
+    font-size: 1.5em;
+    text-align: center;
+    margin-top: 20px;
+    padding: 30px;
+  }
   header {
     display: grid;
     grid-template-columns: 1fr max-content;
@@ -263,8 +304,8 @@
     a {
       padding: 15px 20px;
       border-radius: 7px;
-      background-color: #4caf50;
-      color: white;
+      background-color: hsl(112, 75%, 80%);
+      color: #4c102a;
       text-decoration: none;
       font-weight: bold;
       text-align: center;
@@ -286,7 +327,6 @@
     height: 200px;
     position: relative;
     margin-top: 20px;
-
   }
 
   .score-value {
@@ -305,5 +345,4 @@
     max-width: 50%;
     height: auto;
   }
-
 </style>

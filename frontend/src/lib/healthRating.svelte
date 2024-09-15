@@ -46,7 +46,7 @@
     horseshoe.style.strokeDashoffset = offset;
 
     // Update the score display
-    scoreDisplay.textContent = score;
+    scoreDisplay.textContent = score + "%";
   }
 
   function getColorForScore(score) {
