@@ -15,7 +15,7 @@
   let weight: number;
   let age: number;
   let sex: string = "Male"; // default value
-  let activityLevel: string = "moderate"; // default value
+  let activityLevel: string = "Moderate"; // default value
   let healthCondition: string = "None"; // default value
   let mealsPerDay: number = 3; // default value
 
@@ -53,11 +53,11 @@
   );
 
   const activityLevels = [
-    "sedentary",
-    "light",
-    "moderate",
-    "active",
-    "very active",
+    "Sedentary",
+    "Light",
+    "Moderate",
+    "Active",
+    "Very active",
   ];
 
   const availableHealthConditions = [
@@ -135,7 +135,7 @@
 </script>
 
 <main>
-  <h1>Create Your Health Profile</h1>
+  <h1>Create Your Profile</h1>
   <form on:submit|preventDefault={handleSubmit}>
     <label for="height">Height (cm):</label>
     <input
@@ -328,7 +328,7 @@
   }
 
   .submit-button{
-    width: 66%;
+    width: 50%;
     height: 50px;
     border-radius: 7px;
     background-color: #bcf4b3(0, 0%, 90%);
@@ -357,7 +357,7 @@
     padding: 5px 10px;
     font-size: 1em;
     box-sizing: border-box;
-    box-shadow: 2px 2.5px 0 #598033;
+    box-shadow: 0.5px 0.5px 0 #598033;
     transition: ease 0.20s;
 
     p {
@@ -380,9 +380,9 @@
   }
 
   button {
-  width: 66%;
+  width: 50%;
   height: 50px;
-  border-radius: 7px;
+  border-radius: 14px;
   background-color: #bcf4b3; /* Updated line */
   border: none;
   font-size: 1.1em;
@@ -414,9 +414,9 @@
 
     border-radius: 1.75rem;
     background-color: #c6f8a530;
-    box-shadow: 5px 5px  #598033;
+    box-shadow: 0 0  #598033;
     backdrop-filter: blur(5px);
-    border: 2px solid #000;
+    border: 1.66px solid #000;
     outline: none;
 
   }
@@ -434,12 +434,12 @@
     padding: 5px 10px;
     font-size: 1em;
     box-sizing: border-box;
-    box-shadow: 2px 2.5px 0 #598033;
+    box-shadow: 0.5px 0.5px 0 #598033;
     transition: ease 0.20s;
   }
 
   input:focus {
-    box-shadow: 5.5px 7px 0 #598035;
+    box-shadow: 4.5px 6px 0 #598035;
   }
 
   input:focus-visible {
@@ -457,12 +457,12 @@
     padding: 5px 10px;
     font-size: 1em;
     box-sizing: border-box;
-    box-shadow: 2.5px 3px 0 #598035;
+    box-shadow: 0.5px 0.5px 0 #598035;
     transition: ease 0.20s;
   }
 
   select:focus {
-    box-shadow: 5.5px 7px 0 #598035;
+    box-shadow: 4.5px 6px 0 #598035;
   }
 
   select:focus-visible {
