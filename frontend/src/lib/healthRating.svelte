@@ -1,199 +1,117 @@
 <script>
-  export let ingredients;
+// @ts-nocheck
 
-  function calculateHealthScore() {
-    const nutrientRanges = {
-      carbohydrates: { min: 225, max: 325 }, // grams
-      proteins: { min: 50, max: 175 }, // grams
-      fats: { min: 44, max: 77 }, // grams
-      saturatedFat: { min: 0, max: 22 }, // grams
-      fiber: { min: 25, max: 38 }, // grams
-      sodium: { min: 1500, max: 2300 }, // mg
-      cholesterol: { min: 0, max: 300 }, // mg
-      sugar: { min: 0, max: 37.5 }, // grams
-    };
-    const recipeNutrients = {
-      calories: 0,
-      fat: 0,
-      saturatedFat: 0,
-      cholesterol: 0,
-      sodium: 0,
-      carbs: 0,
-      fiber: 0,
-      sugars: 0,
-      protein: 0,
-    };
+  export let score;
 
-    console.log(recipeNutrients);
-    console.log(ingredients);
+  // for animation
+  let currentScore = 0;
 
-    ingredients.forEach((element) => {
-      recipeNutrients.calories += element.calor;
-      recipeNutrients.fat += element.fat;
-      recipeNutrients.saturatedFat += element.saturatedFat;
-      recipeNutrients.cholesterol += element.cholestrol;
-      recipeNutrients.sodium += element.sodium;
-      recipeNutrients.carbs += element.carbs;
-      recipeNutrients.fiber += element.fiber;
-      recipeNutrients.sugars += element.sugars;
-      recipeNutrients.protein += element.protein;
-    });
-
-    let score = {
-      carb: 100,
-      protein: 100,
-      fat: 100,
-      saturatedFat: 100,
-      fiber: 100,
-      sodium: 100,
-      cholesterol: 100,
-      sugar: 100,
-    };
-
-    const nutrientKeys = Object.keys(nutrientRanges);
-
-    nutrientKeys.forEach((nutrient) => {
-      const { min, max } = nutrientRanges[nutrient];
-      const value = recipeNutrients[nutrient];
-
-      // Calculate percentage deviations from the optimal ranges
-      const maxThreshold = max + 0.08 * max;
-      const minThreshold = min - 0.08 * min;
-
-      switch (nutrient) {
-        case "carbohydrates":
-          // Carbs must be within the range
-
-          if (value < minThreshold) {
-            const offBy = Math.abs((value - min) / min);
-            score.carb -= offBy * 100; // Reduce score proportionally
-          } else if (value > maxThreshold) {
-            const offBy = Math.abs((value - max) / max);
-            score.carb -= offBy * 100; // Reduce score proportionally
-          }
-
-          break;
-
-        case "proteins":
-          // More protein is better (can exceed max)
-          if (value > minThreshold && value < maxThreshold) {
-            score.protein =
-              ((value - minThreshold) / (maxThreshold - minThreshold)) * 50 +
-              50;
-          } else if (value > maxThreshold) {
-            score.protein = 100;
-          } else if (value < minThreshold) {
-            const offBy = Math.abs((value - minThreshold) / minThreshold);
-            score.protein = (50 - offBy * 100) < 0 ? 0 : (50 - offBy * 100);
-          }
-          break;
-
-        case "fats":
-          // less fat is better (can be below min)
-          if (value > minThreshold && value < maxThreshold) {
-            score.fat =
-              ((value - maxThreshold) / (minThreshold - maxThreshold)) * 50 +
-              50;
-          } else if (value > maxThreshold) {
-            const offBy = Math.abs((value - max) / max);
-            score.fat = (50 - offBy * 100) < 0 ? 0 : (50 - offBy * 100);
-          } else if (value < minThreshold) {
-            score.fat = 100;
-          }
-          break;
-
-        case "saturatedFat":
-          // less saturated fat is better (can be below min)
-          if (value > minThreshold && value < maxThreshold) {
-            score.saturatedFat =
-              ((value - maxThreshold) / (minThreshold - maxThreshold)) * 50 +
-              50;
-          } else if (value > maxThreshold) {
-            const offBy = Math.abs((value - max) / max);
-            score.saturatedFat = (50 - offBy * 100) < 0 ? 0 : (50 - offBy * 100);
-          } else if (value < minThreshold) {
-            score.saturatedFat = 100;
-          }
-          break;
-
-        case "fiber":
-          // Fiber more is better (can exceed max)
-          if (value > minThreshold && value < maxThreshold) {
-            score.fiber =
-              ((value - minThreshold) / (maxThreshold - minThreshold)) * 50 +
-              50;
-          } else if (value > maxThreshold) {
-            score.fiber = 100;
-          } else if (value < minThreshold) {
-            const offBy = Math.abs((value - min) / min);
-            score.fiber = (50 - offBy * 100) < 0 ? 0 : (50 - offBy * 100);
-          }
-          break;
-          
-        case "sodium":
-          //less sodium is better (can be below min)
-          if (value > minThreshold && value < maxThreshold) {
-            score.sodium =
-              ((value - maxThreshold) / (minThreshold - maxThreshold)) * 50 +
-              50;
-          } else if (value > maxThreshold) {
-            const offBy = Math.abs((value - max) / max);
-            score.sodium = (50 - offBy * 100) < 0 ? 0 : (50 - offBy * 100);
-          } else if (value < minThreshold) {
-            score.sodium = 100;
-          }
-          break;
-
-        case "cholesterol":
-          // less cholesterol is better (can be below min)
-          if (value > minThreshold && value < maxThreshold) {
-            score.cholesterol =
-              ((value - maxThreshold) / (minThreshold - maxThreshold)) * 50 +
-              50;
-          } else if (value > maxThreshold) {
-            const offBy = Math.abs((value - maxThreshold) / maxThreshold);
-            score.cholesterol = (50 - offBy * 100) < 0 ? 0 : (50 - offBy * 100);
-          } else if (value < minThreshold) {
-            score.cholesterol = 100;
-          }
-          break;
-        
-        case "sugar":
-          // less sugar is better (can be below min)
-          if (value > minThreshold && value < maxThreshold) {
-            score.sugar =
-              ((value - maxThreshold) / (minThreshold - maxThreshold)) * 50 +
-              50;
-          } else if (value > maxThreshold) {
-            const offBy = Math.abs((value - maxThreshold) / maxThreshold);
-            score.sugar = (50 - offBy * 100) < 0 ? 0 : (50 - offBy * 100);
-          } else if (value < minThreshold) {
-            score.sugar = 100;
-          }
-          break;
-        
-        default:
-          break;
-      }
-    });
-
-    const averageScore = Object.values(score).reduce((a, b) => a + b, 0) / 9;
-    return {
-      score,
-      averageScore,
-    };
-
+  // const interval = setInterval(() => {
+  //   if (currentScore <= score) {
+  //     updateHorseshoe(currentScore);
+  //     currentScore++;
+  //   } else {
+  //     clearInterval(interval);
+  //   }
+  // }, 10); // Updates every 50ms
+  $: {
+    if (score !== undefined) {
+      currentScore = 0;
+      updateScore();
+    }
   }
 
+  function updateScore() {
+    const interval = setInterval(() => {
+      if (currentScore <= score) {
+        updateHorseshoe(currentScore);
+        currentScore++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 10);
+  }
 
-  let healthScore = calculateHealthScore();
+  function updateHorseshoe(score) {
+    const horseshoe = document.getElementById("horseshoe");
+    const scoreDisplay = document.getElementById("score-text");
 
-  console.table(healthScore.score);
-  console.log(healthScore.averageScore);
+    // Update the color of the horseshoe based on the score
+    horseshoe.style.stroke = getColorForScore(score);
 
+    // Max stroke-dasharray length for the arc is 300 (calculated manually based on the SVG)
+    const maxDashOffset = 300;
+    const offset = maxDashOffset - (score / 100) * maxDashOffset;
+
+    // Update the stroke-dashoffset to control the horseshoe progress
+    horseshoe.style.strokeDashoffset = offset;
+
+    // Update the score display
+    scoreDisplay.textContent = score;
+  }
+
+  function getColorForScore(score) {
+    const r = Math.round(255 - (score / 100) * 255); // Red decreases from 255 to 0
+    const g = Math.round((score / 100) * 255); // Green increases from 0 to 255
+    return `rgb(${r},${g},0)`; // Return the interpolated color as an RGB string
+  }
 </script>
 
 <div>
 
+  
+  <div class="main-score">
+    <div class="score-container">
+      <!-- SVG Horseshoe with text inside -->
+      <svg width="200" height="150" viewBox="0 0 200 150">
+        <!-- Horseshoe Background -->
+        <path
+          id="horseshoe-bg"
+          d="M 10 100 A 90 90 0 1 1 190 100"
+          fill="none"
+          stroke="#eee"
+          stroke-width="20"
+        />
+        <!-- Progressing Horseshoe Arc -->
+        <path
+          id="horseshoe"
+          d="M 10 100 A 90 90 0 1 1 190 100"
+          fill="none"
+          stroke="#4caf50"
+          stroke-width="20"
+          stroke-dasharray="300"
+          stroke-dashoffset="300"
+        />
 
+        <!-- Score Text in the Center -->
+        <text id="score-text" x="100%" y="100%" class="score-text">0</text>
+      </svg>
+    </div>
+  </div>
 </div>
+
+<style lang="scss">
+  #score-text {
+    font-size: 2em;
+    font-weight: bold;
+    fill: #4caf50;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    transform: translate(-50%, -50%);
+  }
+
+  .score-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    position: relative;
+    margin-top: 20px;
+  }
+
+  .score-value {
+    font-size: 24px;
+    position: absolute;
+    text-align: center;
+  }
+</style>
