@@ -9,7 +9,7 @@
 
   import { onMount } from "svelte";
 
-  const apiKey = "6ade810a10bee1395acfa169e52e04e7";
+  const apiKey = "1cb6ec5a4168615114405fbb801f9bf3";
   const appId = "67c90523"; // Replace with your Nutritionix App ID
 
   async function getCurrentIngredients() {
