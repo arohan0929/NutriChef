@@ -7,7 +7,7 @@ export function calculateHealthScore(ingredients, servings) {
 
   let nutrientRanges = {
     carbohydrates: { min: 225, max: 325 }, // grams
-    protein: { min: 50, max: 175 }, // grams
+    protein: { min: 10, max: 30 }, // grams
     fat: { min: 44, max: 77 }, // grams
     saturatedFat: { min: 0, max: 22 }, // grams
     fiber: { min: 2, max: 10 }, // grams
@@ -31,7 +31,7 @@ export function calculateHealthScore(ingredients, servings) {
 
 
   ingredients.forEach((element) => {
-    recipeNutrients.calories += element.calor;
+    recipeNutrients.calories += element.calories;
     recipeNutrients.fat += element.fat;
     recipeNutrients.saturatedFat += element.saturatedFat;
     recipeNutrients.cholesterol += element.cholesterol;
@@ -62,7 +62,7 @@ export function calculateHealthScore(ingredients, servings) {
     sugar: 100,
   };
 
-  console.log(recipeNutrients);
+
   
 
   const nutrientKeys = Object.keys(nutrientRanges);
@@ -70,7 +70,6 @@ export function calculateHealthScore(ingredients, servings) {
   nutrientKeys.forEach((nutrient) => {
     const { min, max } = nutrientRanges[nutrient];
     const value = recipeNutrients[nutrient];
-    console.log(nutrient, value);
     
 
     // Calculate percentage deviations from the optimal ranges
@@ -101,11 +100,8 @@ export function calculateHealthScore(ingredients, servings) {
         } else if (value > maxThreshold) {
           score.protein = 100;
         } else if (value < minThreshold) {
-          console.log("min", minThreshold);
-          console.log("value", value);
           
           const offBy = Math.abs((value - minThreshold) / minThreshold);
-          console.log("offBy", offBy);
           
           score.protein = (50 - offBy * 100) < 0 ? 0 : (50 - offBy * 100);
         }
@@ -203,7 +199,7 @@ export function calculateHealthScore(ingredients, servings) {
 
 
 
-  const averageScore = Object.values(score).reduce((a, b) => a + b, 0) / 9;
+  const averageScore = Object.values(score).reduce((a, b) => a + b, 0) / Object.keys(score).length;
   return {
     score,
     averageScore,

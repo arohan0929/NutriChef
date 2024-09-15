@@ -2,6 +2,7 @@
 // @ts-nocheck
 
   export let score;
+  
 
   // for animation
   let currentScore = 0;
@@ -14,12 +15,7 @@
   //     clearInterval(interval);
   //   }
   // }, 10); // Updates every 50ms
-  $: {
-    if (score !== undefined) {
-      currentScore = 0;
-      updateScore();
-    }
-  }
+ 
 
   function updateScore() {
     const interval = setInterval(() => {
@@ -32,9 +28,12 @@
     }, 10);
   }
 
+  updateScore();
+
+  let horseshoe;
+  let scoreText;
   function updateHorseshoe(score) {
-    const horseshoe = document.getElementById("horseshoe");
-    const scoreDisplay = document.getElementById("score-text");
+    const scoreDisplay = scoreText;
 
     // Update the color of the horseshoe based on the score
     horseshoe.style.stroke = getColorForScore(score);
@@ -57,7 +56,7 @@
   }
 </script>
 
-<div>
+<div class="healthScore">
 
   
   <div class="main-score">
@@ -74,7 +73,7 @@
         />
         <!-- Progressing Horseshoe Arc -->
         <path
-          id="horseshoe"
+          bind:this={horseshoe}
           d="M 10 100 A 90 90 0 1 1 190 100"
           fill="none"
           stroke="#4caf50"
@@ -84,14 +83,14 @@
         />
 
         <!-- Score Text in the Center -->
-        <text id="score-text" x="100%" y="100%" class="score-text">0</text>
+        <text x="100%" y="100%" class="score-text"  bind:this={scoreText}>0</text>
       </svg>
     </div>
   </div>
 </div>
 
 <style lang="scss">
-  #score-text {
+  .score-text {
     font-size: 2em;
     font-weight: bold;
     fill: #4caf50;
@@ -100,18 +99,17 @@
     transform: translate(-50%, -50%);
   }
 
-  .score-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    position: relative;
-    margin-top: 20px;
-  }
 
   .score-value {
     font-size: 24px;
     position: absolute;
     text-align: center;
   }
+
+  .score-container, .main-score, .healthScore {
+    width: max-content;
+  }
+
+  
+
 </style>

@@ -11,6 +11,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         options: resolve(__dirname, 'options.html'),
         popup: resolve(__dirname, 'popup.html'),
+        report: resolve(__dirname, 'report.html'),
       }
     },
     minify: false,

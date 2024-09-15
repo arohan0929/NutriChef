@@ -1,5 +1,5 @@
 <script>
-    import { calculateHealthScore } from "../lib/healthRating";
+  import { calculateHealthScore } from "../lib/healthRating";
 
   // @ts-nocheck
 
@@ -40,7 +40,7 @@
         qty: food.serving_qty,
         unit: food.serving_unit,
         wtg: food.serving_weight_grams,
-        calorie: food.nf_calories,
+        calories: food.nf_calories,
         fat: food.nf_total_fat,
         saturatedFat: food.nf_saturated_fat,
         cholesterol: food.nf_cholesterol,
@@ -63,15 +63,11 @@
     let ingredients = await getCurrentIngredients();
     // @ts-ignore
 
-    console.log(ingredients);
-    
-
     if (!ingredients) {
       return;
     }
 
     console.log(ingredients);
-    
 
     ingredients = ingredients.map((ingredient) => {
       // find / and take the value before and after and divide to nearest 2 decimal
@@ -89,9 +85,32 @@
       return ingredient.replace(/\$\d+(\.\d+)?/, "");
     });
 
+    // whenever there is a g like 100g make it into 100 grams 
+    ingredients = ingredients.map((ingredient) => {
+      return ingredient.replace(/\s*(\d+)\s*g/, "$1 grams of");
+    });
+
+    // do the same for lbs, kg, oz and ml
+    ingredients = ingredients.map((ingredient) => {
+      return ingredient.replace(/\s*(\d+)\s*lbs/, "$1 pounds");
+    });
+
+    ingredients = ingredients.map((ingredient) => {
+      return ingredient.replace(/\s*(\d+)\s*kg/, "$1 kilograms");
+    });
+
+    ingredients = ingredients.map((ingredient) => {
+      return ingredient.replace(/\s*(\d+)\s*oz/, "$1ounces");
+    });
+
+    ingredients = ingredients.map((ingredient) => {
+      return ingredient.replace(/\s*(\d+)\s*ml/, "$1milliliters");
+    });
+
+
     // whenever there is a comma put everything after it in parenthesis
     ingredients = ingredients.map((ingredient) => {
-      return ingredient.replace(/,(.*)/, "($1)");
+      return ingredient.replace(/\s*,\s*(.*)/, "($1)");
     });
 
     ingredients = ingredients.map((ingredient) => {
@@ -103,6 +122,10 @@
         .replace(/\s*\(\s*/g, " (") // Ensure a space before '(' and remove any spaces right after '('
         .replace(/\s*\)/g, ")");
     });
+
+    console.log(ingredients);
+    console.log(ingredients.join(","));
+
 
     try {
       const response = await fetch(
@@ -116,7 +139,7 @@
           },
           body: JSON.stringify({
             // @ts-ignore
-            query: ingredients.join(","),
+            query: ingredients.join(", "),
           }),
         },
       );
@@ -128,7 +151,6 @@
     } catch (error) {
       console.error("Error fetching nutritional information:", error);
     }
-
 
     // return;
   }
@@ -148,11 +170,6 @@
     console.log(score);
     chrome.storage.local.set({ nutrition });
   });
-
-
-
-
- 
 </script>
 
 <!-- {#if ingredients}
@@ -189,16 +206,14 @@
   </a>
 </header>
 <main>
-
-{#if nutrition && score}
-  <HealthRating score={score.averageScore} />
-{/if}
+  {#if nutrition && score}
+    <HealthRating score={score.averageScore} />
+  {/if}
 
   <div class="detail-reports-btns">
-    <a href=""> View Full Report </a>
-    <a href=""> Improve Health Score </a>
+    <a href="report.html" target="_blank"> View Full Report </a>
+    <a href="report.html?improve=true" target="_blank"> Improve Health Score </a>
   </div>
-
 
   <div>
     <p>Add to calendar</p>
@@ -211,7 +226,6 @@
         <option value="tuesday">Tuesday</option>
         <option value="wednesday">Wednesday</option>
         <option value="thursday">Thursday</option>
-        
       </select>
 
       <!-- select option that goes from 1-6 -->
@@ -222,9 +236,9 @@
         <option value="4">4</option>
         <option value="5">5</option>
         <option value="6">6</option>
+      </select>
     </form>
   </div>
-
 </main>
 
 <style lang="scss">
@@ -255,7 +269,7 @@
     padding: 0 15px;
     margin-top: 20px;
 
-    a { 
+    a {
       padding: 15px 20px;
       border-radius: 7px;
       background-color: #4caf50;
@@ -266,7 +280,6 @@
       display: grid;
       place-items: center;
     }
-
   }
 
   .current-date {
@@ -281,7 +294,7 @@
     align-items: center;
     height: 200px;
     position: relative;
-    margin-top: 20px; 
+    margin-top: 20px;
   }
 
   .score-value {
