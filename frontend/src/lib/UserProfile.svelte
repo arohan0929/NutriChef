@@ -3,13 +3,13 @@
 
   const defaultNutrientRanges = {
     carbohydrates: { min: 225, max: 325 }, // grams
-    protein: { min: 60, max: 100 }, // grams
-    fat: { min: 44, max: 77 }, // grams
-    saturatedFat: { min: 0, max: 22 }, // grams
-    fiber: { min: 25, max: 38 }, // grams
-    sodium: { min: 1500, max: 2300 }, // mg
-    cholesterol: { min: 0, max: 300 }, // mg
-    sugar: { min: 0, max: 37.5 }, // grams
+    protein: { min: 40, max: 60 }, // grams
+    fat: { min: 35, max: 50 }, // grams
+    saturatedFat: { min: 6, max: 18 }, // grams
+    fiber: { min: 15, max: 25 }, // grams
+    sodium: { min: 2700, max: 3500 }, // mg
+    cholesterol: { min: 100, max: 250 }, // mg
+    sugar: { min: 20, max: 30 }, // grams
   };
 
   let height: number;
@@ -72,26 +72,26 @@
       nutrientRanges.carbohydrates.min = 130; // minimum needed for brain function
       nutrientRanges.carbohydrates.max = 180; // controlled max for blood glucose management
       nutrientRanges.fiber.min = 30; // Increase fiber for glucose control
-      nutrientRanges.sugar.max = 25; // Reduce sugar intake
+      nutrientRanges.sugar.max = 15; // Reduce sugar intake
     } else if (condition === "High Cholesterol") {
-      nutrientRanges.fat.max = 60; // Lower fat intake
-      nutrientRanges.saturatedFat.max = 20; // Limit saturated fat
+      nutrientRanges.fat.max = 40; // Lower fat intake
+      nutrientRanges.saturatedFat.max = 14; // Limit saturated fat
       nutrientRanges.cholesterol.max = 150; // Strict cholesterol limit
       nutrientRanges.fiber.min = 30; // Increase fiber to reduce LDL cholesterol
     } else if (condition === "Hypertension") {
       nutrientRanges.sodium.max = 1500; // Recommended sodium limit for hypertension
-      nutrientRanges.fat.max = 70; // Limit fat, focusing on unsaturated fat
+      nutrientRanges.fat.max = 40; // Limit fat, focusing on unsaturated fat
       nutrientRanges.fiber.min = 30; // Fiber helps in blood pressure regulation
     } else if (condition === "Obesity") {
-      nutrientRanges.fat.max = 55; // Reduce fat to control caloric intake
+      nutrientRanges.fat.max = 40; // Reduce fat to control caloric intake
       nutrientRanges.carbohydrates.min = 150; // Lower carbs for calorie reduction
       nutrientRanges.fiber.min = 30; // High fiber intake to increase satiety
     } else if (condition === "Heart Disease") {
       nutrientRanges.cholesterol.max = 150; // Strict cholesterol control
-      nutrientRanges.fat.max = 60; // Limit unhealthy fat
+      nutrientRanges.fat.max = 40; // Limit unhealthy fat
       nutrientRanges.fiber.min = 30; // Increase fiber for heart health
     } else if (condition === "Thyroid Disorders") {
-      nutrientRanges.protein.min = 60; // Increase protein for metabolism support
+      nutrientRanges.protein.min = 50; // Increase protein for metabolism support
       nutrientRanges.fiber.min = 30; // Support digestion with fiber
     }
 

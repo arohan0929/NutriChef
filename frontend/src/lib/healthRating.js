@@ -33,7 +33,12 @@ export async function calculateHealthScore(ingredients, servings) {
   if (user) {
     nutrientRanges = user.nutrientRanges;
   }
+  
+  Object.keys(nutrientRanges).forEach(nutrient => { nutrientRanges[nutrient].min /= servings; nutrientRanges[nutrient].max /= servings; });
+
  
+
+
 // standarize
   let recipeNutrients = {
     calories: 0,
@@ -118,6 +123,7 @@ export async function calculateHealthScore(ingredients, servings) {
         } else if (value > maxThreshold) {
           score.protein = 100;
         } else if (value < minThreshold) {
+          console.log(value,minThreshold);
           
           const offBy = Math.abs((value - minThreshold) / minThreshold);
           

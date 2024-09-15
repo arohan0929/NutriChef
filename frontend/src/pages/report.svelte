@@ -5,8 +5,8 @@
     import NutritionalLabel from "../lib/NutritionalLabel.svelte";
 
     let isIngridentsImproved = false;
-    const apiKey = "1cb6ec5a4168615114405fbb801f9bf3";
-    const appId = "67c90523"; // Replace with your Nutritionix App ID
+    const apiKey = "";
+    const appId = ""; // Replace with your Nutritionix App ID
 
     async function getCurrentIngredients() {
         return new Promise((resolve, reject) => {
