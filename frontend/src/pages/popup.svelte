@@ -34,16 +34,15 @@
   }
 
   async function getCurrentUserProfile() {
-  return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       chrome.storage.local.get(["userProfile"], async function (result) {
-          if (chrome.runtime.lastError) {
-              return reject(chrome.runtime.lastError);
-          }
-          resolve(result["userProfile"]);
+        if (chrome.runtime.lastError) {
+          return reject(chrome.runtime.lastError);
+        }
+        resolve(result["userProfile"]);
       });
-  });
-}
-
+    });
+  }
 
   function cleanNutritionixData(obj) {
     let cleanArr = [];
@@ -175,7 +174,6 @@
   let signedIn = false;
 
   onMount(async () => {
-
     let user = await getCurrentUserProfile();
     if (user) {
       signedIn = true;
@@ -183,7 +181,7 @@
 
     nutrition = await getNutrition();
     console.log(nutrition);
-  
+
     if (!nutrition) {
       siteSupported = false;
       return;
@@ -191,11 +189,22 @@
 
     let servings = await getServings();
     console.log(servings);
-    
+
     // if servings is an array, get the first element
     if (Array.isArray(servings)) {
       servings = servings[0];
     }
+    // if servings is not a number just like 10-12 servings just make it 10
+    if (isNaN(servings)) {
+      // process the servings to get the number even if it does not have a hypen just look in the start of the string for a number
+      servings = servings.match(/^\d+/);
+      if (servings) {
+        servings = servings[0];
+      } else {
+        servings = 1;
+      }
+    }
+    
     console.log(nutrition);
     score = await calculateHealthScore(nutrition, servings);
     console.log(score);
@@ -262,9 +271,13 @@
     </div>
   </main>
 {:else if !signedIn}
-  <p class="site-not-supported">Please enter your details in the profile/options page</p>
+  <p class="site-not-supported">
+    Please enter your details in the profile/options page
+  </p>
 {:else}
-  <p class="site-not-supported">Site does not have a recipe or site is not supported yet</p>
+  <p class="site-not-supported">
+    Site does not have a recipe or site is not supported yet
+  </p>
 {/if}
 
 <style lang="scss">

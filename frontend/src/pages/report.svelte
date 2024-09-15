@@ -84,6 +84,16 @@
         if (Array.isArray(servings)) {
             servings = servings[0];
         }
+        // if servings is not a number just like 10-12 servings just make it 10
+        if (isNaN(servings)) {
+            // process the servings to get the number even if it does not have a hypen just look in the start of the string for a number
+            servings = servings.match(/^\d+/);
+            if (servings) {
+                servings = servings[0];
+            } else {
+                servings = 1;
+            }
+        }
 
         nutrition = await getCurrentNutrition();
         recipeNutrients = totalNutrients(nutrition, servings);
