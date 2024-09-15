@@ -68,7 +68,7 @@
           id="horseshoe-bg"
           d="M 10 100 A 90 90 0 1 1 190 100"
           fill="none"
-          stroke="#eee"
+          stroke="#ffffff"
           stroke-width="20"
         />
         <!-- Progressing Horseshoe Arc -->
